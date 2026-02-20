@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_sr04_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_sr04" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="704500000001fs"></ZoomEndTime>
+      <Cursor1Time time="99545840000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="201"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/tb_sr04/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/rst" type="logic">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/echo" type="logic">
+      <obj_property name="ElementShortName">echo</obj_property>
+      <obj_property name="ObjectShortName">echo</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/btn_r" type="logic">
+      <obj_property name="ElementShortName">btn_r</obj_property>
+      <obj_property name="ObjectShortName">btn_r</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/fnd_data" type="array">
+      <obj_property name="ElementShortName">fnd_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">fnd_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/fnd_digit" type="array">
+      <obj_property name="ElementShortName">fnd_digit[3:0]</obj_property>
+      <obj_property name="ObjectShortName">fnd_digit[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_sr04/trigger" type="logic">
+      <obj_property name="ElementShortName">trigger</obj_property>
+      <obj_property name="ObjectShortName">trigger</obj_property>
+   </wvobject>
+   <wvobject fp_name="group30" type="group">
+      <obj_property name="label">btn</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/i_btn" type="logic">
+         <obj_property name="ElementShortName">i_btn</obj_property>
+         <obj_property name="ObjectShortName">i_btn</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/o_btn" type="logic">
+         <obj_property name="ElementShortName">o_btn</obj_property>
+         <obj_property name="ObjectShortName">o_btn</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/counter_reg" type="array">
+         <obj_property name="ElementShortName">counter_reg[19:0]</obj_property>
+         <obj_property name="ObjectShortName">counter_reg[19:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/r_tick" type="logic">
+         <obj_property name="ElementShortName">r_tick</obj_property>
+         <obj_property name="ObjectShortName">r_tick</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/q_reg" type="array">
+         <obj_property name="ElementShortName">q_reg[7:0]</obj_property>
+         <obj_property name="ObjectShortName">q_reg[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/q_next" type="array">
+         <obj_property name="ElementShortName">q_next[7:0]</obj_property>
+         <obj_property name="ObjectShortName">q_next[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/debounce" type="logic">
+         <obj_property name="ElementShortName">debounce</obj_property>
+         <obj_property name="ObjectShortName">debounce</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_BTN/r_btn_prev" type="logic">
+         <obj_property name="ElementShortName">r_btn_prev</obj_property>
+         <obj_property name="ObjectShortName">r_btn_prev</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group36" type="group">
+      <obj_property name="label">fnd</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/tb_sr04/dut/UDT/fnd_in_data" type="array">
+         <obj_property name="ElementShortName">fnd_in_data[11:0]</obj_property>
+         <obj_property name="ObjectShortName">fnd_in_data[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/UDT/clk" type="logic">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/UDT/reset" type="logic">
+         <obj_property name="ElementShortName">reset</obj_property>
+         <obj_property name="ObjectShortName">reset</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/UDT/fnd_digit" type="array">
+         <obj_property name="ElementShortName">fnd_digit[3:0]</obj_property>
+         <obj_property name="ObjectShortName">fnd_digit[3:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/UDT/fnd_data" type="array">
+         <obj_property name="ElementShortName">fnd_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">fnd_data[7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group51" type="group">
+      <obj_property name="label">sr04</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/start" type="logic">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+         <obj_property name="CustomSignalColor">#00FF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/start_reg" type="logic">
+         <obj_property name="ElementShortName">start_reg</obj_property>
+         <obj_property name="ObjectShortName">start_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/echo" type="logic">
+         <obj_property name="ElementShortName">echo</obj_property>
+         <obj_property name="ObjectShortName">echo</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/dist" type="array">
+         <obj_property name="ElementShortName">dist[11:0]</obj_property>
+         <obj_property name="ObjectShortName">dist[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/trigger" type="logic">
+         <obj_property name="ElementShortName">trigger</obj_property>
+         <obj_property name="ObjectShortName">trigger</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/st_ct" type="array">
+         <obj_property name="ElementShortName">st_ct[1:0]</obj_property>
+         <obj_property name="ObjectShortName">st_ct[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/st_nt" type="array">
+         <obj_property name="ElementShortName">st_nt[1:0]</obj_property>
+         <obj_property name="ObjectShortName">st_nt[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/tr_ct" type="logic">
+         <obj_property name="ElementShortName">tr_ct</obj_property>
+         <obj_property name="ObjectShortName">tr_ct</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/counter_tick_pulse_ct" type="array">
+         <obj_property name="ElementShortName">counter_tick_pulse_ct[3:0]</obj_property>
+         <obj_property name="ObjectShortName">counter_tick_pulse_ct[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/counter_time_ct" type="array">
+         <obj_property name="ElementShortName">counter_time_ct[14:0]</obj_property>
+         <obj_property name="ObjectShortName">counter_time_ct[14:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_sr04/dut/U_SR04/dist_ct" type="array">
+         <obj_property name="ElementShortName">dist_ct[11:0]</obj_property>
+         <obj_property name="ObjectShortName">dist_ct[11:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
