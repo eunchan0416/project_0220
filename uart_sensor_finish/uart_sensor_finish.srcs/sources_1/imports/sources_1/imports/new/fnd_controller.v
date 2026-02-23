@@ -27,15 +27,17 @@ module fnd_controller (
     wire [3:0] w_dht_digit_10;
     wire [3:0] w_dht_digit_100;
     wire [3:0] w_dht_digit_1000;
-     wire [3:0] w_mux_out_dht;
- wire [3:0] w_mux_out_mode;
+    wire [3:0] w_mux_out_dht;
+    wire [3:0] w_mux_out_mode;
 
-    wire [3:0] w_mux_out;
+    // wire [3:0] w_mux_out; // <-- 연결되지 않고 방치되었던 Floating Wire 제거완료!
     wire w_1kz;
     wire w_dot_on_off;
-wire [3:0] w_dot_code;
+    wire [3:0] w_dot_code;
+
     assign w_dot_code = w_dot_on_off ? 4'd14 : 4'd15;
-assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_min_1,w_digit_sec_10, w_digit_sec_1,w_digit_msec_10,w_digit_msec_1};
+    assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_min_1,w_digit_sec_10, w_digit_sec_1,w_digit_msec_10,w_digit_msec_1};
+
     clk_div U_CLK_DIV (
         .clk(clk),
         .reset(reset),
@@ -44,8 +46,9 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
 
     dot_onoff U_DOT_COMP (
         .msec(fnd_in_data[6:0]),
-        .dot_onoff(w_dot_on_off)
+        .o_dot_onoff(w_dot_on_off) // <-- 이름 충돌이 나던 포트 수정완료!
     );
+
     counter_8 U_COUNTER_8 (
         .clk(w_1kz),
         .reset(reset),
@@ -99,18 +102,14 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
         .digit_1000(w_dht_digit_1000)
     );
 
-
-
     //sr04 
- digit_splitter_sr04 U_SR04 (
+    digit_splitter_sr04 U_SR04 (
         .in_data(fnd_in_data[11:0]),
         .digit_1(w_sr_digit_1),
         .digit_10(w_sr_digit_10),
         .digit_100(w_sr_digit_100),
         .digit_1000(w_sr_digit_1000)
     );
-
-
 
     //hour
     digit_splitter #(
@@ -130,7 +129,6 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
         .digit_10(w_digit_min_10)
     );
 
-
     //sec
     digit_splitter #(
         .BIT_WIDTH(6)
@@ -149,12 +147,10 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
         .digit_10(w_digit_msec_10)
     );
 
-
     bcd U_BCD (
         .bcd(w_mux_out_mode),
         .fnd_data(fnd_data)
     );
-
 
     mux_4_1 sr04 (
         .digit_1(w_sr_digit_1),
@@ -165,7 +161,7 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
         .o_mux(w_mux_out_sr)
     );
 
- mux_4_1 dht (
+    mux_4_1 dht (
         .digit_1(w_dht_digit_1),
         .digit_10(w_dht_digit_10),
         .digit_100(w_dht_digit_100),
@@ -187,9 +183,6 @@ assign now_fnd_data = {w_digit_hour_10,w_digit_hour_1 ,w_digit_min_10 , w_digit_
 endmodule
 
 
-
-
-
 module clk_div (
     input clk,
     input reset,
@@ -198,7 +191,7 @@ module clk_div (
     reg [16:0] counter_r;
     always @(posedge clk, posedge reset) begin
         if (reset) begin
-            counter_r <= 1'b0;
+            counter_r <= 17'b0; // 사이즈를 맞춰주어 경고 방지
             o_1khz <= 1'b0;
         end else begin
             if (counter_r == 99999) begin
@@ -211,6 +204,7 @@ module clk_div (
         end
     end
 endmodule
+
 module counter_8 (
     input        clk,
     input        reset,
@@ -231,7 +225,6 @@ module decoder_2_4 (
     input [1:0] btn,
     output reg [3:0] fnd_digit
 );
-
     always @(*) begin
         case (btn)
             2'b00:   fnd_digit = 4'b1110;
@@ -240,7 +233,6 @@ module decoder_2_4 (
             default: fnd_digit = 4'b0111;
         endcase
     end
-
 endmodule
 
 module mux_2_1 (
@@ -249,10 +241,8 @@ module mux_2_1 (
     input  [3:0] i_sel1,
     output [3:0] o_mux
 );
-
     //sel 1: output sel1, sel 0 : sel0
     assign o_mux = sel ? i_sel1 : i_sel0;
-
 endmodule
 
 
@@ -280,15 +270,8 @@ module mux8_1 (
             3'b111:  mux_out = digit_dot_1000;
             default: mux_out = 4'hf;
         endcase
-
-
     end
-
 endmodule
-
-
-
-
 
 
 module digit_splitter #(
@@ -297,13 +280,9 @@ module digit_splitter #(
     input [BIT_WIDTH-1:0] in_data,
     output [3:0] digit_1,
     output [3:0] digit_10
-
 );
-
     assign digit_1  = (in_data) % 10;
     assign digit_10 = (in_data / 10) % 10;
-
-
 endmodule
 
 
@@ -314,24 +293,19 @@ module digit_splitter_dht (
     output [3:0] digit_100,
     output [3:0] digit_1000
 );
-
-
     assign digit_1  = (in_data[7:0]) % 10;
     assign digit_10 = (in_data[7:0] / 10) % 10;
     assign digit_100 = (in_data[15:8] ) % 10;
     assign digit_1000 = (in_data[15:8] / 10) % 10;
-
 endmodule
 
 module digit_splitter_sr04 (
-
     input [11:0] in_data,
     output [3:0] digit_1,
     output [3:0] digit_10,
     output [3:0] digit_100,
     output [3:0] digit_1000
 );
-
     assign digit_1  = (in_data) % 10;
     assign digit_10 = (in_data / 10) % 10;
     assign digit_100 = (in_data / 100) % 10;
@@ -339,12 +313,10 @@ module digit_splitter_sr04 (
 endmodule
 
 
-
 module bcd (
     input      [3:0] bcd,
     output reg [7:0] fnd_data
 );
-
     always @(*) begin
         case (bcd)
             4'd0:  fnd_data = 8'hC0;
@@ -359,7 +331,6 @@ module bcd (
             4'd9:  fnd_data = 8'h90;
             4'd14: fnd_data = 8'h7F;
             4'd15: fnd_data = 8'hFF;
-
             default: fnd_data = 8'hFF;
         endcase
     end
@@ -368,13 +339,9 @@ endmodule
 
 module dot_onoff (
     input [6:0] msec,
-    output dot_onoff
+    output o_dot_onoff // <-- 충돌을 막기 위해 출력 포트 이름 변경!
 );
-
-    assign dot_onoff = (msec < 50);
-
-
-
+    assign o_dot_onoff = (msec < 50);
 endmodule
 
 module mux_4_1 (
@@ -384,9 +351,7 @@ module mux_4_1 (
     input [3:0] digit_1000,
     input [1:0] sel,
     output reg [3:0] o_mux
-
 );
-
     always @(*) begin
         case (sel)
             0: o_mux = digit_1;
@@ -395,5 +360,4 @@ module mux_4_1 (
             default: o_mux = digit_1000;
         endcase
     end
-
 endmodule
