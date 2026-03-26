@@ -12,7 +12,6 @@ module top_uart_fnd (
     input        echo,
 
     output       uart_tx,
-    output [9:0] led,
     output [3:0] fnd_digit,
     output [7:0] fnd_data,
     output       trigger,
@@ -59,7 +58,7 @@ module top_uart_fnd (
     wire [15:0] w_humidity, w_temperature;
     
     // 디버그 LED
-    wire  [2:0] debug;
+    /*wire  [2:0] debug;
     assign led[0] = (debug == 0) ? 1 : 0;
     assign led[1] = (debug == 1) ? 1 : 0;
     assign led[2] = (debug == 2) ? 1 : 0;
@@ -68,7 +67,7 @@ module top_uart_fnd (
     assign led[5] = (debug == 5) ? 1 : 0;
     assign led[6] = (debug == 6) ? 1 : 0;
     assign led[7] = (debug == 7) ? 1 : 0;
-
+*/
     // ==========================================
     // 1. UART 컨트롤러
     // ==========================================
@@ -90,7 +89,7 @@ module top_uart_fnd (
     // ==========================================
     // 2. 수신(RX) 및 송신(TX) FIFO 
     // ==========================================
-    fifo U_FIFO_RX (
+    fifo #(.DEPTH(8), .BIT_WIDTH(8)) U_FIFO_RX (
         .clk      (clk),
         .rst      (rst),
         .push     (w_rx_done),
@@ -198,8 +197,8 @@ module top_uart_fnd (
         .start      (w_dht_start),
         .humidity   (w_humidity),
         .temperature(w_temperature),
-        .dht_done   (led[8]),
-        .dht_valid  (led[9]),
+        .dht_done   (), //led[8]
+        .dht_valid  (), //led[9]
         .debug      (debug),
         .dhtio      (dhtio)
     );
