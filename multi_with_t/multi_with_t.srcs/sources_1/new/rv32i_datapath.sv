@@ -14,7 +14,7 @@ module rv32i_datapath (
     input logic        jal,
     input logic [ 2:0] rfwdsrcsel,
     input logic [31:0] bus_rdata,
-    input logic [31:0] instr_data,  // Stable from Instruction Memory
+    input logic [31:0] instr_data,  // CPU 내부의 instr_reg로부터 들어옵니다.
 
     output logic [31:0] instr_addr,
     output logic [31:0] bus_addr,
@@ -73,7 +73,6 @@ module rv32i_datapath (
         .data_in (i_dec_RD2),
         .data_out(o_dec_RD2)
     );
-
 
     imm_extender U_IMM_EXT (
         .instr_data(instr_data),
@@ -140,103 +139,8 @@ module rv32i_datapath (
     );
 
 endmodule
-module register_file (
-    input               clk,
-    input               rst,
-    input               rf_we,
-    input        [ 4:0] RA1,
-    input        [ 4:0] RA2,
-    input        [ 4:0] WA,
-    input        [31:0] Wdata,
-    output logic [31:0] RD1,
-    output logic [31:0] RD2
-);
 
-    //register gen
-    logic [31:0] register_file[1:31];
-
-    //read CL
-    assign RD1 = (RA1 == 0) ? 32'b0 : register_file[RA1];
-    assign RD2 = (RA2 == 0) ? 32'b0 : register_file[RA2];
-
-    //address[0] register_file[0]<=0  or assgin rd1= wa==0 ? 32'b0 : regiseter_file[RA1];
-
-    //write AL
-    always_ff @(posedge clk) begin
-        begin
-
-            if (!rst && rf_we) begin
-                register_file[WA] <= Wdata;
-            end
-        end
-
-    end
-
-
-    //simulation test
-`ifdef SIMULATION
-    initial begin
-
-        for (int i = 1; i < 32; i++) begin
-            register_file[i] = i;
-        end
-
-    end
-`endif
-
-endmodule
-
-
-module alu (
-    input        [31:0] RD1,
-    input        [31:0] RD2,
-    input        [ 3:0] alucontrol,  //{funct7[6],funct3} :4bit
-    output logic [31:0] alu_result,
-    output logic        btaken
-);
-
-
-
-
-    //CL
-
-
-    always_comb begin
-        //R_TYPE
-        case (alucontrol)
-            `ADD:  alu_result = RD1 + RD2;
-            `SUB:  alu_result = RD1 - RD2;
-            `SLL:  alu_result = RD1 << RD2[4:0];  // bit width:32bit 
-            `SLT:  alu_result = ($signed(RD1) < $signed(RD2)) ? 32'b1 : 32'b0;
-            `SLTU: alu_result = (RD1 < RD2) ? 32'b1 : 32'b0;  // unsigned 
-            `XOR:  alu_result = RD1 ^ RD2;
-            `SRL:  alu_result = RD1 >> RD2[4:0];
-            `SRA:  alu_result = $signed(RD1) >>> RD2[4:0];  // MSB_EXTEND
-            `OR:   alu_result = RD1 | RD2;
-            `AND:  alu_result = RD1 & RD2;
-
-            default: alu_result = 32'b0;
-        endcase
-
-        //B-TYPE
-        case (alucontrol)
-            `BEQ: btaken = (RD1 == RD2) ? 1 : 0;  // EQ
-            `BNE: btaken = (RD1 != RD2) ? 1 : 0;  // NE
-            `BLT: btaken = ($signed(RD1) < $signed(RD2)) ? 1 : 0;
-            `BLTU: btaken = (RD1 < RD2) ? 1 : 0;
-            `BGE: btaken = ($signed(RD1) >= $signed(RD2)) ? 1 : 0;  //GE
-            `BGEU: btaken = (RD1 >= RD2) ? 1 : 0;  // GEU
-            default: btaken = 0;
-        endcase
-
-
-    end
-
-
-
-endmodule
-
-
+// ==========================================
 
 module program_counter (
     input               clk,
@@ -250,24 +154,18 @@ module program_counter (
     output logic [31:0] pc_4_sum,
     output logic [31:0] pc_imm_sum
 );
-    logic [31:0] pc_mux_alu_out, pc_mux_out, o_exe_pcnext;
+    logic [31:0] pc_mux_alu_out, pc_mux_out;
     logic [31:0] pc_alu_out_4, pc_alu_out_imm;
+    
     assign pc_imm_sum = pc_alu_out_imm;
     assign pc_4_sum   = pc_alu_out_4;
 
-
-    register U_PC_REGG (
-        .clk(clk),
-        .rst(rst),
-        .data_in(pc_mux_out),
-        .data_out(o_exe_pcnext)
-    );
-
+    // 타이밍을 꼬이게 했던 U_PC_REGG 삭제, MUX 결과를 다이렉트로 연결
     register_en U_PC_REG (
         .clk(clk),
         .rst(rst),
         .pc_en(pc_en),
-        .data_in(o_exe_pcnext),
+        .data_in(pc_mux_out),
         .data_out(program_counter)
     );
 
@@ -298,23 +196,86 @@ module program_counter (
 
 endmodule
 
+// ==========================================
+// 나머지 모듈들 (Register_file, Alu, Register 등)은 변경 사항 없이 그대로 유지합니다.
+
+module register_file (
+    input               clk,
+    input               rst,
+    input               rf_we,
+    input        [ 4:0] RA1,
+    input        [ 4:0] RA2,
+    input        [ 4:0] WA,
+    input        [31:0] Wdata,
+    output logic [31:0] RD1,
+    output logic [31:0] RD2
+);
+    logic [31:0] register_file[1:31];
+
+    assign RD1 = (RA1 == 0) ? 32'b0 : register_file[RA1];
+    assign RD2 = (RA2 == 0) ? 32'b0 : register_file[RA2];
+
+    always_ff @(posedge clk) begin
+        if (!rst && rf_we) begin
+            if (WA != 0) register_file[WA] <= Wdata;
+        end
+    end
+
+`ifdef SIMULATION
+    initial begin
+        for (int i = 1; i < 32; i++) begin
+            register_file[i] = i;
+        end
+    end
+`endif
+endmodule
+
+module alu (
+    input        [31:0] RD1,
+    input        [31:0] RD2,
+    input        [ 3:0] alucontrol,  
+    output logic [31:0] alu_result,
+    output logic        btaken
+);
+    always_comb begin
+        case (alucontrol)
+            `ADD:  alu_result = RD1 + RD2;
+            `SUB:  alu_result = RD1 - RD2;
+            `SLL:  alu_result = RD1 << RD2[4:0];  
+            `SLT:  alu_result = ($signed(RD1) < $signed(RD2)) ? 32'b1 : 32'b0;
+            `SLTU: alu_result = (RD1 < RD2) ? 32'b1 : 32'b0;  
+            `XOR:  alu_result = RD1 ^ RD2;
+            `SRL:  alu_result = RD1 >> RD2[4:0];
+            `SRA:  alu_result = $signed(RD1) >>> RD2[4:0];  
+            `OR:   alu_result = RD1 | RD2;
+            `AND:  alu_result = RD1 & RD2;
+            default: alu_result = 32'b0;
+        endcase
+
+        case (alucontrol)
+            `BEQ: btaken = (RD1 == RD2) ? 1 : 0;  
+            `BNE: btaken = (RD1 != RD2) ? 1 : 0;  
+            `BLT: btaken = ($signed(RD1) < $signed(RD2)) ? 1 : 0;
+            `BLTU: btaken = (RD1 < RD2) ? 1 : 0;
+            `BGE: btaken = ($signed(RD1) >= $signed(RD2)) ? 1 : 0;  
+            `BGEU: btaken = (RD1 >= RD2) ? 1 : 0;  
+            default: btaken = 0;
+        endcase
+    end
+endmodule
+
 module register (
     input               clk,
     input               rst,
     input        [31:0] data_in,
     output logic [31:0] data_out
 );
-    logic [31:0] register;
-
-    assign data_out = register;
-
+    logic [31:0] reg_data;
+    assign data_out = reg_data;
     always_ff @(posedge clk, posedge rst) begin
-        if (rst) register <= 0;
-        else register <= data_in;
-
-
+        if (rst) reg_data <= 0;
+        else reg_data <= data_in;
     end
-
 endmodule
 
 module register_en (
@@ -324,20 +285,16 @@ module register_en (
     input        [31:0] data_in,
     output logic [31:0] data_out
 );
-    logic [31:0] register;
-
-    assign data_out = register;
-
+    logic [31:0] reg_data;
+    assign data_out = reg_data;
     always_ff @(posedge clk, posedge rst) begin
-        if (rst) register <= 0;
+        if (rst) reg_data <= 0;
         else begin
             if (pc_en) begin
-                register <= data_in;
+                reg_data <= data_in;
             end
         end
-
     end
-
 endmodule
 
 module pc_alu (
@@ -345,39 +302,28 @@ module pc_alu (
     input [31:0] b,
     output logic [31:0] pc_alu_out
 );
-
     assign pc_alu_out = a + b;
-
-
 endmodule
 
 module mux_2x1 (
-    input        [31:0] in0,     //sel 0
-    input        [31:0] in1,     //sel 1
+    input        [31:0] in0, 
+    input        [31:0] in1, 
     input               sel,
     output logic [31:0] out_mux
 );
-
     assign out_mux = sel ? in1 : in0;
-
 endmodule
 
-
-
-
 module mux_5x1 (
-    input [31:0] in0,  //sel 0
-    input [31:0] in1,  //sel 1
-    input [31:0] in2,  //sel 2
-    input [31:0] in3,  //sel 3
-    input [31:0] in4,  //sel 4
-
+    input [31:0] in0,  
+    input [31:0] in1,  
+    input [31:0] in2,  
+    input [31:0] in3,  
+    input [31:0] in4,  
     input        [ 2:0] sel,
     output logic [31:0] out_mux
 );
-
     always_comb begin
-
         case (sel)
             3'd0: out_mux = in0;
             3'd1: out_mux = in1;
@@ -386,8 +332,5 @@ module mux_5x1 (
             3'd4: out_mux = in4;
             default: out_mux = 32'd0;
         endcase
-
     end
-
 endmodule
-

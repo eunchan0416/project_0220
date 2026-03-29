@@ -7,10 +7,10 @@ module instruction_mem (
 );
     //
     //addr size: 32bit, 
-    logic [31:0] rom[0:127];
+    logic [31:0] rom[0:255];
 
     initial begin
-        $readmemh("APB_GPO.mem", rom);
+        $readmemh("APB_GPO_GPIO.mem", rom);
         //$readmemh("riscv_rv32i_rom_data.mem", rom);
 
     end
